@@ -2,6 +2,8 @@
 
 A private, local-first video compressor and converter for MP4, MOV, MKV, WebM, AVI and M4V files. It converts to MP4, WebM, or MOV and is designed to handle large inputs without loading the whole video into browser memory.
 
+The cozy pixel-art interface is hosted by two animated workshop characters: Momo the red-panda compressor and Kapi the capybara converter. Their four-frame game loops follow the active media operation while the progress bar updates.
+
 ## Run it
 
 ```powershell

@@ -12,12 +12,14 @@ const elements = {
   startOver: $('#startOver'), errorPanel: $('#errorPanel'), errorMessage: $('#errorMessage'),
   tryAgain: $('#tryAgain'), profileFieldset: $('#profileFieldset'),
   formatFieldset: $('#formatFieldset'),
+  workerName: $('#workerName'), workerRole: $('#workerRole'),
 };
 
 let selectedFile = null;
 let xhr = null;
 let pollTimer = null;
 let activeJob = null;
+let activeActor = 'momo';
 
 function formatBytes(bytes) {
   if (!Number.isFinite(bytes)) return '--';
@@ -30,6 +32,10 @@ function formatBytes(bytes) {
 
 function extension(name) {
   return (name.split('.').pop() || 'VIDEO').toUpperCase().slice(0, 5);
+}
+
+function sourceFormat(name) {
+  return (name.split('.').pop() || '').toLowerCase();
 }
 
 function show(view) {
@@ -84,7 +90,8 @@ function finish(job) {
   elements.savedPercent.textContent = `${saved}%`;
   elements.downloadButton.href = `/api/jobs/${job.id}/download`;
   elements.downloadButton.download = job.outputName;
-  elements.downloadButton.querySelector('span').textContent = `DOWNLOAD ${job.format.toUpperCase()}`;
+  elements.downloadButton.querySelector('span').textContent = `Download your ${job.format.toUpperCase()}`;
+  elements.resultPanel.dataset.actor = activeActor;
   show('resultPanel');
 }
 
@@ -95,9 +102,17 @@ async function poll(jobId) {
     if (!response.ok) throw new Error(job.error);
     if (job.state === 'done') return finish(job);
     if (job.state === 'error') return fail(job.error);
-    elements.progressEyebrow.textContent = '[ TRANSCODING ]';
-    elements.progressTitle.textContent = 'RESHAPING EVERY FRAME...';
-    elements.progressNote.textContent = 'Media Sensei is compressing and converting your video.';
+    elements.progressPanel.classList.remove('uploading');
+    elements.progressPanel.classList.add('transcoding');
+    if (activeActor === 'kapi') {
+      elements.progressEyebrow.textContent = "KAPI'S FORMAT-SWAP QUEST ✦";
+      elements.progressTitle.textContent = 'Kapi is converting every frame';
+      elements.progressNote.textContent = 'Dials are turning and pixels are finding new homes.';
+    } else {
+      elements.progressEyebrow.textContent = "MOMO'S COMPRESSION QUEST ✦";
+      elements.progressTitle.textContent = 'Momo is making every frame cozier';
+      elements.progressNote.textContent = 'The compressor is humming along nicely.';
+    }
     setProgress(job.progress);
     pollTimer = setTimeout(() => poll(jobId), 800);
   } catch (error) {
@@ -109,10 +124,16 @@ function compress() {
   if (!selectedFile) return;
   const profile = document.querySelector('input[name="profile"]:checked').value;
   const format = document.querySelector('input[name="format"]:checked').value;
+  activeActor = sourceFormat(selectedFile.name) === format ? 'momo' : 'kapi';
+  elements.progressPanel.dataset.actor = activeActor;
+  elements.workerName.textContent = activeActor === 'momo' ? 'MOMO' : 'KAPI';
+  elements.workerRole.textContent = activeActor === 'momo' ? 'COMPRESSION CREW' : 'CONVERSION CREW';
   show('progressPanel');
-  elements.progressEyebrow.textContent = '[ UPLOADING ]';
-  elements.progressTitle.textContent = 'INGESTING VIDEO...';
-  elements.progressNote.textContent = 'Keep this terminal open while Media Sensei works.';
+  elements.progressPanel.classList.remove('transcoding');
+  elements.progressPanel.classList.add('uploading');
+  elements.progressEyebrow.textContent = 'LOADING THE WORKSHOP...';
+  elements.progressTitle.textContent = `${activeActor === 'momo' ? 'Momo' : 'Kapi'} is getting everything ready`;
+  elements.progressNote.textContent = 'Keep this little nook open while the adventure runs.';
   setProgress(0);
 
   xhr = new XMLHttpRequest();
