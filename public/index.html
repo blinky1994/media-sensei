@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#f6e8d7">
   <title>Media Sensei — Cozy Video Converter</title>
-  <meta name="description" content="Compress and convert videos locally to MP4, WebM, or MOV with Momo, your cozy Media Sensei.">
+  <meta name="description" content="Compress with Momo or convert with Kapa locally to MP4, WebM, or MOV.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&family=Pixelify+Sans:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
 </head>
-<body>
+<body data-mode="compress">
   <div class="wall-pattern" aria-hidden="true"></div>
   <div class="ambient-stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
 
@@ -28,23 +28,38 @@
       <div class="hero-copy">
         <p class="kicker">✦ WELCOME TO THE MEDIA NOOK</p>
         <h1>Big videos,<br><em>tiny worries.</em></h1>
-        <p class="lede">Compress, convert, and cozy up. Everything happens right here on your computer—Momo's got it handled.</p>
+        <p class="lede">Compress, convert, and cozy up. Everything happens right here on your computer—our little workshop has it handled.</p>
         <div class="format-tags"><span>MP4</span><span>WEBM</span><span>MOV</span></div>
       </div>
       <div class="mascot-intro">
         <div class="pixel-sun" aria-hidden="true"></div>
         <div class="music-notes" aria-hidden="true"><i>♪</i><i>♫</i><i>♪</i></div>
-        <img src="/assets/media-sensei-mascot.png" alt="Momo, a red panda wearing headphones and holding a cassette">
-        <div class="mascot-label"><strong>Hi, I'm Momo!</strong><span>your media sensei</span></div>
+        <img class="hero-mascot hero-momo" src="/assets/media-sensei-mascot.png" alt="Momo, the red-panda compression guide">
+        <img class="hero-mascot hero-kapa" src="/assets/animations/kapi-convert-4.png" alt="Kapa, the capybara conversion guide">
+        <div class="mascot-label"><strong id="mascotGreeting">Hi, I'm Momo!</strong><span id="mascotRole">your compression sensei</span></div>
       </div>
     </section>
 
-    <section class="workspace" aria-label="Video compressor and converter">
+    <section id="workspace" class="workspace" data-mode="compress" aria-label="Video compressor and converter">
       <div class="workspace-top">
         <div><span></span><span></span><span></span></div>
-        <p>momo's conversion nook</p>
+        <p id="workshopTitle">momo's compression nook</p>
         <b>♥</b>
       </div>
+
+      <fieldset id="modeSwitcher" class="mode-switcher">
+        <legend>Choose your workshop station</legend>
+        <div class="mode-options">
+          <label class="mode-option">
+            <input type="radio" name="mode" value="compress" checked>
+            <span><i>↘</i><strong>Compress</strong><small>Same format, smaller file</small><b>Momo's station</b></span>
+          </label>
+          <label class="mode-option">
+            <input type="radio" name="mode" value="convert">
+            <span><i>⇄</i><strong>Convert</strong><small>Change to a new format</small><b>Kapa's station</b></span>
+          </label>
+        </div>
+      </fieldset>
 
       <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Choose a video file">
         <input id="fileInput" type="file" accept="video/*,.mkv" hidden>
@@ -55,10 +70,10 @@
           <div class="dust-puff dust-a"></div><div class="dust-puff dust-b"></div>
         </div>
         <div>
-          <h2>Drop a video into the basket</h2>
-          <p>or <span>pick one from your files</span></p>
+          <h2 id="dropTitle">Drop a video for Momo</h2>
+          <p id="dropHint">Same format, just smaller · or <span>pick one from your files</span></p>
         </div>
-        <small>MP4 · MOV · MKV · WEBM · AVI · M4V &nbsp; / &nbsp; UP TO 20 GB</small>
+        <small id="dropFormatNote">MP4 · MOV · WEBM &nbsp; / &nbsp; UP TO 20 GB</small>
       </div>
 
       <div id="filePanel" class="file-panel hidden">
@@ -68,28 +83,34 @@
           <button id="removeFile" class="icon-button" type="button" aria-label="Remove file">×</button>
         </div>
 
-        <div class="divider"></div>
-        <fieldset id="formatFieldset">
-          <legend><b>1</b> What should Momo make?</legend>
-          <div class="formats">
-            <label class="format-option">
-              <input type="radio" name="format" value="mp4" checked>
-              <span><i>▶</i><strong>MP4</strong><small>plays anywhere</small></span>
-            </label>
-            <label class="format-option">
-              <input type="radio" name="format" value="webm">
-              <span><i>⌁</i><strong>WEBM</strong><small>made for web</small></span>
-            </label>
-            <label class="format-option">
-              <input type="radio" name="format" value="mov">
-              <span><i>✦</i><strong>MOV</strong><small>ready to edit</small></span>
-            </label>
-          </div>
-        </fieldset>
+        <div id="formatSection">
+          <div class="divider"></div>
+          <fieldset id="formatFieldset">
+            <legend><b>1</b> What should Kapa make?</legend>
+            <div class="formats">
+              <label class="format-option">
+                <input type="radio" name="format" value="mp4" checked>
+                <span><i>▶</i><strong>MP4</strong><small>plays anywhere</small></span>
+              </label>
+              <label class="format-option">
+                <input type="radio" name="format" value="webm">
+                <span><i>⌁</i><strong>WEBM</strong><small>made for web</small></span>
+              </label>
+              <label class="format-option">
+                <input type="radio" name="format" value="mov">
+                <span><i>✦</i><strong>MOV</strong><small>ready to edit</small></span>
+              </label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div id="compressionFormatNote" class="compression-format-note">
+          <span>↘</span><div><strong>Keeping the original format</strong><small id="compressionFormatText">Momo will make this video smaller without changing its container.</small></div>
+        </div>
 
         <div class="divider"></div>
         <fieldset id="profileFieldset">
-          <legend><b>2</b> Pick a cozy setting</legend>
+          <legend><b id="profileStep">1</b> Pick a cozy setting</legend>
           <div class="profiles">
             <label class="profile">
               <input type="radio" name="profile" value="maximum">
@@ -97,7 +118,7 @@
             </label>
             <label class="profile">
               <input type="radio" name="profile" value="balanced" checked>
-              <span class="profile-card"><i>🌿</i><strong>Just right</strong><small>Balanced · up to 1080p</small><b>Momo's favorite</b></span>
+              <span class="profile-card"><i>🌿</i><strong>Just right</strong><small>Balanced · up to 1080p</small><b id="balancedHint">Momo's favorite</b></span>
             </label>
             <label class="profile">
               <input type="radio" name="profile" value="quality">
@@ -105,7 +126,7 @@
             </label>
           </div>
         </fieldset>
-        <button id="compressButton" class="primary-button" type="button"><span>Let Momo work some magic</span><b>→</b></button>
+        <button id="compressButton" class="primary-button" type="button"><span>Let Momo shrink it</span><b>→</b></button>
       </div>
 
       <div id="progressPanel" class="progress-panel hidden" aria-live="polite">
@@ -116,7 +137,7 @@
             <img class="sprite-frame frame-3" src="/assets/animations/momo-compress-3.png" alt="">
             <img class="sprite-frame frame-4" src="/assets/animations/momo-compress-4.png" alt="">
           </div>
-          <div class="sprite-actor kapi-sprite">
+          <div class="sprite-actor kapa-sprite">
             <img class="sprite-frame frame-1" src="/assets/animations/kapi-convert-1.png" alt="">
             <img class="sprite-frame frame-2" src="/assets/animations/kapi-convert-2.png" alt="">
             <img class="sprite-frame frame-3" src="/assets/animations/kapi-convert-3.png" alt="">
@@ -137,7 +158,7 @@
         <div class="celebration-scene" aria-hidden="true">
           <span class="spark s1">✦</span><span class="spark s2">♥</span><span class="spark s3">✧</span><span class="spark s4">♪</span>
           <img class="result-actor result-momo" src="/assets/animations/momo-compress-4.png" alt="">
-          <img class="result-actor result-kapi" src="/assets/animations/kapi-convert-4.png" alt="">
+          <img class="result-actor result-kapa" src="/assets/animations/kapi-convert-4.png" alt="">
           <div class="tiny-friend friend-one">■</div><div class="tiny-friend friend-two">▶</div>
         </div>
         <p class="eyebrow">ALL DONE! ✦</p>
@@ -152,8 +173,9 @@
       </div>
 
       <div id="errorPanel" class="error-panel hidden" role="alert">
-        <img src="/assets/media-sensei-mascot.png" alt="Momo looking concerned">
-        <div><strong>Oops, Momo hit a little snag.</strong><p id="errorMessage"></p></div>
+        <img class="error-mascot error-momo" src="/assets/media-sensei-mascot.png" alt="Momo looking concerned">
+        <img class="error-mascot error-kapa" src="/assets/animations/kapi-convert-4.png" alt="Kapa looking concerned">
+        <div><strong id="errorTitle">Oops, Momo hit a little snag.</strong><p id="errorMessage"></p></div>
         <button id="tryAgain" class="text-button" type="button">Try again</button>
       </div>
     </section>
