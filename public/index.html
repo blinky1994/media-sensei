@@ -3,42 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#f2f0e9">
-  <title>Squeeze — Make videos lighter</title>
-  <meta name="description" content="Compress large MP4 and video files locally with a clean, private workflow.">
+  <meta name="theme-color" content="#050806">
+  <title>Media Sensei // Video Compression & Conversion</title>
+  <meta name="description" content="Compress and convert videos locally to MP4, WebM, or MOV with Media Sensei.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <div class="grain"></div>
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
   <header class="site-header">
-    <a class="brand" href="/" aria-label="Squeeze home">
-      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
-      <span>Squeeze</span>
+    <a class="brand" href="/" aria-label="Media Sensei home">
+      <span class="brand-mark" aria-hidden="true">媒</span>
+      <span><b>MEDIA</b> SENSEI</span>
     </a>
-    <div class="privacy-pill"><span></span> Runs on your computer</div>
+    <div class="system-status"><span></span> SYSTEM_LOCAL // SECURE</div>
   </header>
 
   <main>
     <section class="intro">
-      <p class="eyebrow">VIDEO, MINUS THE WEIGHT</p>
-      <h1>Big video.<br><em>Small footprint.</em></h1>
-      <p class="lede">Compress MP4, MOV, MKV and WebM files without sending them to a mystery server. Your 600 MB video is welcome here.</p>
+      <p class="eyebrow">[ LOCAL MEDIA DOJO // v1.0 ]</p>
+      <h1>MASTER YOUR<br><em>MEDIA.</em></h1>
+      <p class="lede"><span>&gt;</span> Compress heavy footage. Convert between formats. Keep every byte on your machine.</p>
     </section>
 
-    <section class="workspace" aria-label="Video compressor">
+    <section class="workspace" aria-label="Video compressor and converter">
+      <div class="terminal-bar"><span>media_sensei.exe</span><span>_ &square; &times;</span></div>
       <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Choose a video file">
         <input id="fileInput" type="file" accept="video/*,.mkv" hidden>
         <div class="drop-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>
         </div>
         <div>
-          <h2>Drop your video here</h2>
-          <p>or <span>browse your files</span></p>
+          <p class="command">$ ingest --video</p>
+          <h2>DROP VIDEO TO BEGIN</h2>
+          <p>or <span>browse local files</span></p>
         </div>
-        <small>MP4 · MOV · MKV · WEBM &nbsp; / &nbsp; UP TO 20 GB</small>
+        <small>MP4 // MOV // MKV // WEBM // AVI // M4V &nbsp; [ MAX 20 GB ]</small>
       </div>
 
       <div id="filePanel" class="file-panel hidden">
@@ -48,90 +51,109 @@
             <strong id="fileName"></strong>
             <span id="fileMeta"></span>
           </div>
-          <button id="removeFile" class="icon-button" type="button" aria-label="Remove file">×</button>
+          <button id="removeFile" class="icon-button" type="button" aria-label="Remove file">&times;</button>
         </div>
 
         <div class="divider"></div>
+        <fieldset id="formatFieldset">
+          <legend><span>01.</span> SELECT OUTPUT FORMAT</legend>
+          <div class="formats">
+            <label class="format-option">
+              <input type="radio" name="format" value="mp4" checked>
+              <span><strong>MP4</strong><small>H.264 + AAC</small><b>UNIVERSAL</b></span>
+            </label>
+            <label class="format-option">
+              <input type="radio" name="format" value="webm">
+              <span><strong>WEBM</strong><small>VP9 + OPUS</small><b>WEB READY</b></span>
+            </label>
+            <label class="format-option">
+              <input type="radio" name="format" value="mov">
+              <span><strong>MOV</strong><small>H.264 + AAC</small><b>EDIT READY</b></span>
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="divider"></div>
         <fieldset id="profileFieldset">
-          <legend>How small should we go?</legend>
+          <legend><span>02.</span> SET COMPRESSION LEVEL</legend>
           <div class="profiles">
             <label class="profile">
               <input type="radio" name="profile" value="maximum">
               <span class="profile-card">
                 <span class="radio-dot"></span>
-                <strong>Maximum shrink</strong>
-                <small>Smallest file · up to 720p</small>
-                <b>~70–85% smaller</b>
+                <strong>MAXIMUM SHRINK</strong>
+                <small>Up to 720p</small>
+                <b>~70-85% SMALLER</b>
               </span>
             </label>
             <label class="profile">
               <input type="radio" name="profile" value="balanced" checked>
               <span class="profile-card">
                 <span class="radio-dot"></span>
-                <strong>Balanced</strong>
-                <small>Great quality · up to 1080p</small>
-                <b>~45–70% smaller</b>
+                <strong>BALANCED</strong>
+                <small>Up to 1080p</small>
+                <b>~45-70% SMALLER</b>
               </span>
             </label>
             <label class="profile">
               <input type="radio" name="profile" value="quality">
               <span class="profile-card">
                 <span class="radio-dot"></span>
-                <strong>Keep quality</strong>
-                <small>Gentle compression · up to 4K</small>
-                <b>~20–45% smaller</b>
+                <strong>KEEP QUALITY</strong>
+                <small>Up to 4K</small>
+                <b>~20-45% SMALLER</b>
               </span>
             </label>
           </div>
         </fieldset>
         <button id="compressButton" class="primary-button" type="button">
-          <span>Compress video</span>
+          <span>EXECUTE CONVERSION</span>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>
         </button>
       </div>
 
       <div id="progressPanel" class="progress-panel hidden" aria-live="polite">
         <div class="orb-wrap"><div class="orb"><span id="progressValue">0%</span></div></div>
-        <p id="progressEyebrow" class="eyebrow">UPLOADING</p>
-        <h2 id="progressTitle">Moving your video in…</h2>
-        <p id="progressNote">Keep this tab open. Large files can take a little while.</p>
+        <p id="progressEyebrow" class="eyebrow">[ UPLOADING ]</p>
+        <h2 id="progressTitle">INGESTING VIDEO...</h2>
+        <p id="progressNote">Keep this terminal open while Media Sensei works.</p>
         <div class="progress-track"><div id="progressBar"></div></div>
-        <button id="cancelButton" class="text-button" type="button">Cancel</button>
+        <button id="cancelButton" class="text-button" type="button">[ ABORT PROCESS ]</button>
       </div>
 
       <div id="resultPanel" class="result-panel hidden" aria-live="polite">
         <div class="success-mark">
           <svg viewBox="0 0 24 24"><path d="m6 12 4 4 8-9"/></svg>
         </div>
-        <p class="eyebrow">NICELY SQUEEZED</p>
-        <h2>Your lighter video is ready.</h2>
+        <p class="eyebrow">[ PROCESS COMPLETE ]</p>
+        <h2>YOUR MEDIA HAS LEVELED UP.</h2>
         <div class="saving-card">
-          <div><span>Before</span><strong id="beforeSize"></strong></div>
-          <span class="saving-arrow">→</span>
-          <div><span>After</span><strong id="afterSize"></strong></div>
-          <div class="saved-badge"><strong id="savedPercent"></strong><span>saved</span></div>
+          <div><span>INPUT</span><strong id="beforeSize"></strong></div>
+          <span class="saving-arrow">&gt;&gt;</span>
+          <div><span>OUTPUT</span><strong id="afterSize"></strong></div>
+          <div class="saved-badge"><strong id="savedPercent"></strong><span>SAVED</span></div>
         </div>
         <a id="downloadButton" class="primary-button" href="#" download>
-          <span>Download compressed MP4</span>
+          <span>DOWNLOAD OUTPUT</span>
           <svg viewBox="0 0 24 24"><path d="M12 4v12m0 0 5-5m-5 5-5-5M5 20h14"/></svg>
         </a>
-        <button id="startOver" class="text-button" type="button">Compress another video</button>
+        <button id="startOver" class="text-button" type="button">[ PROCESS ANOTHER VIDEO ]</button>
       </div>
 
       <div id="errorPanel" class="error-panel hidden" role="alert">
-        <span>!</span><div><strong>That didn’t compress</strong><p id="errorMessage"></p></div>
-        <button id="tryAgain" class="text-button" type="button">Try again</button>
+        <span>!</span><div><strong>PROCESS FAILED</strong><p id="errorMessage"></p></div>
+        <button id="tryAgain" class="text-button" type="button">[ RETRY ]</button>
       </div>
     </section>
 
     <section class="trust-row" aria-label="Benefits">
-      <div><span>01</span><strong>Private by design</strong><p>Files never leave your computer.</p></div>
-      <div><span>02</span><strong>Made for big files</strong><p>Streamed handling, up to 20 GB.</p></div>
-      <div><span>03</span><strong>Plays everywhere</strong><p>Outputs a compatible H.264 MP4.</p></div>
+      <div><span>01</span><strong>LOCAL_ONLY</strong><p>No cloud transfer. Your files stay here.</p></div>
+      <div><span>02</span><strong>HEAVY_LIFTING</strong><p>Streamed handling for files up to 20 GB.</p></div>
+      <div><span>03</span><strong>MULTI_FORMAT</strong><p>Output MP4, WebM, or MOV.</p></div>
     </section>
   </main>
 
-  <footer><span>SQUEEZE / LOCAL VIDEO COMPRESSION</span><span>NO CLOUD. NO ACCOUNT. NO NONSENSE.</span></footer>
+  <footer><span>MEDIA_SENSEI // LOCAL MEDIA MASTERY</span><span>NO CLOUD // NO ACCOUNT // NO TRACE</span></footer>
   <script src="/app.js"></script>
 </body>
 </html>

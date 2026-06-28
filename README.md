@@ -1,6 +1,6 @@
-# Squeeze
+# Media Sensei
 
-A private, local-first video compressor for MP4, MOV, MKV, WebM, AVI and M4V files. It outputs broadly compatible H.264/AAC MP4 files and is designed to handle large inputs without loading the whole video into browser memory.
+A private, local-first video compressor and converter for MP4, MOV, MKV, WebM, AVI and M4V files. It converts to MP4, WebM, or MOV and is designed to handle large inputs without loading the whole video into browser memory.
 
 ## Run it
 
@@ -20,5 +20,3 @@ The FFmpeg executable is bundled by the `ffmpeg-static` package. Uploaded and co
 - **Keep quality:** CRF 22, up to 4K, 160 kbps audio
 
 Actual savings depend on the input codec, bitrate, resolution and visual complexity. Already-compressed videos may not become smaller.
-
-# media-sensei

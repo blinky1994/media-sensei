@@ -16,9 +16,15 @@ const JOB_TTL = 6 * 60 * 60 * 1000;
 const jobs = new Map();
 
 const profiles = {
-  maximum: { crf: '31', preset: 'medium', audio: '80k', maxWidth: 1280 },
-  balanced: { crf: '26', preset: 'medium', audio: '112k', maxWidth: 1920 },
-  quality: { crf: '22', preset: 'slow', audio: '160k', maxWidth: 3840 },
+  maximum: { h264Crf: '31', vp9Crf: '42', preset: 'medium', audio: '80k', maxWidth: 1280 },
+  balanced: { h264Crf: '26', vp9Crf: '34', preset: 'medium', audio: '112k', maxWidth: 1920 },
+  quality: { h264Crf: '22', vp9Crf: '28', preset: 'slow', audio: '160k', maxWidth: 3840 },
+};
+
+const formats = {
+  mp4: { extension: 'mp4', mime: 'video/mp4', videoCodec: 'libx264', audioCodec: 'aac' },
+  webm: { extension: 'webm', mime: 'video/webm', videoCodec: 'libvpx-vp9', audioCodec: 'libopus' },
+  mov: { extension: 'mov', mime: 'video/quicktime', videoCodec: 'libx264', audioCodec: 'aac' },
 };
 
 const mime = {
@@ -56,6 +62,7 @@ function publicJob(job) {
     outputSize: job.outputSize || null,
     originalName: job.originalName,
     outputName: job.outputName,
+    format: job.format,
     error: job.error || null,
   };
 }
@@ -69,18 +76,24 @@ async function removeJob(id) {
 
 function startCompression(job, profileName) {
   const profile = profiles[profileName] || profiles.balanced;
+  const format = formats[job.format];
   job.state = 'compressing';
   job.progress = 1;
   let durationSeconds = 0;
   let stderrTail = '';
   const scale = `scale=trunc(min(${profile.maxWidth}\\,iw)/2)*2:-2`;
+  const videoArgs = format.videoCodec === 'libvpx-vp9'
+    ? ['-c:v', format.videoCodec, '-crf', profile.vp9Crf, '-b:v', '0', '-deadline', 'good', '-cpu-used', '2']
+    : ['-c:v', format.videoCodec, '-preset', profile.preset, '-crf', profile.h264Crf];
+  const containerArgs = job.format === 'webm' ? [] : ['-movflags', '+faststart'];
   const args = [
     '-y', '-i', job.inputPath,
     '-map_metadata', '-1',
     '-vf', scale,
-    '-c:v', 'libx264', '-preset', profile.preset, '-crf', profile.crf,
-    '-pix_fmt', 'yuv420p', '-movflags', '+faststart',
-    '-c:a', 'aac', '-b:a', profile.audio,
+    ...videoArgs,
+    '-pix_fmt', 'yuv420p',
+    ...containerArgs,
+    '-c:a', format.audioCodec, '-b:a', profile.audio,
     job.outputPath,
   ];
 
@@ -104,7 +117,7 @@ function startCompression(job, profileName) {
 
   process.on('error', (error) => {
     job.state = 'error';
-    job.error = `Could not start the compressor: ${error.message}`;
+    job.error = `Could not start the converter: ${error.message}`;
   });
 
   process.on('close', async (code) => {
@@ -128,7 +141,9 @@ async function createJob(req, res, url) {
   const size = Number(req.headers['content-length'] || 0);
   const originalName = safeName(req.headers['x-file-name']);
   const profile = url.searchParams.get('profile') || 'balanced';
+  const formatName = url.searchParams.get('format') || 'mp4';
   if (!profiles[profile]) return sendJson(res, 400, { error: 'Unknown compression profile.' });
+  if (!formats[formatName]) return sendJson(res, 400, { error: 'Unknown output format.' });
   if (!size) return sendJson(res, 411, { error: 'The file size is required.' });
   if (size > MAX_BYTES) return sendJson(res, 413, { error: 'Files larger than 20 GB are not supported.' });
 
@@ -138,8 +153,8 @@ async function createJob(req, res, url) {
   const ext = path.extname(originalName) || '.mp4';
   const stem = path.basename(originalName, ext);
   const inputPath = path.join(dir, `input${ext}`);
-  const outputName = `${stem}-compressed.mp4`;
-  const outputPath = path.join(dir, 'compressed.mp4');
+  const outputName = `${stem}-media-sensei.${formats[formatName].extension}`;
+  const outputPath = path.join(dir, `converted.${formats[formatName].extension}`);
   const output = fs.createWriteStream(inputPath, { flags: 'wx' });
 
   let received = 0;
@@ -170,7 +185,7 @@ async function createJob(req, res, url) {
   output.on('finish', () => {
     if (failed) return;
     const job = {
-      id, dir, inputPath, outputPath, originalName, outputName,
+      id, dir, inputPath, outputPath, originalName, outputName, format: formatName,
       inputSize: received, outputSize: null, state: 'queued', progress: 0,
       createdAt: Date.now(), process: null,
     };
@@ -194,11 +209,11 @@ async function handler(req, res) {
   const match = url.pathname.match(/^\/api\/jobs\/([a-f0-9-]+)(?:\/(download))?$/);
   if (match) {
     const job = jobs.get(match[1]);
-    if (!job) return sendJson(res, 404, { error: 'This compression job has expired.' });
+    if (!job) return sendJson(res, 404, { error: 'This conversion job has expired.' });
     if (req.method === 'GET' && match[2] === 'download') {
       if (job.state !== 'done') return sendJson(res, 409, { error: 'The video is not ready yet.' });
       return serveFile(res, job.outputPath, {
-        'Content-Type': 'video/mp4',
+        'Content-Type': formats[job.format].mime,
         'Content-Disposition': `attachment; filename="${job.outputName.replace(/"/g, '')}"`,
       });
     }
@@ -231,7 +246,7 @@ async function main() {
   http.createServer((req, res) => handler(req, res).catch((error) => {
     console.error(error);
     if (!res.headersSent) sendJson(res, 500, { error: 'Something went wrong.' });
-  })).listen(PORT, HOST, () => console.log(`Squeeze is running at http://${HOST}:${PORT}`));
+  })).listen(PORT, HOST, () => console.log(`Media Sensei is running at http://${HOST}:${PORT}`));
 }
 
 main().catch((error) => {

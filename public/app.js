@@ -11,6 +11,7 @@ const elements = {
   savedPercent: $('#savedPercent'), downloadButton: $('#downloadButton'),
   startOver: $('#startOver'), errorPanel: $('#errorPanel'), errorMessage: $('#errorMessage'),
   tryAgain: $('#tryAgain'), profileFieldset: $('#profileFieldset'),
+  formatFieldset: $('#formatFieldset'),
 };
 
 let selectedFile = null;
@@ -19,7 +20,7 @@ let pollTimer = null;
 let activeJob = null;
 
 function formatBytes(bytes) {
-  if (!Number.isFinite(bytes)) return '—';
+  if (!Number.isFinite(bytes)) return '--';
   const units = ['B', 'KB', 'MB', 'GB'];
   let value = bytes;
   let unit = 0;
@@ -83,6 +84,7 @@ function finish(job) {
   elements.savedPercent.textContent = `${saved}%`;
   elements.downloadButton.href = `/api/jobs/${job.id}/download`;
   elements.downloadButton.download = job.outputName;
+  elements.downloadButton.querySelector('span').textContent = `DOWNLOAD ${job.format.toUpperCase()}`;
   show('resultPanel');
 }
 
@@ -93,27 +95,28 @@ async function poll(jobId) {
     if (!response.ok) throw new Error(job.error);
     if (job.state === 'done') return finish(job);
     if (job.state === 'error') return fail(job.error);
-    elements.progressEyebrow.textContent = 'COMPRESSING';
-    elements.progressTitle.textContent = 'Squeezing every frame…';
-    elements.progressNote.textContent = 'You can leave it working here. The first pass takes the longest.';
+    elements.progressEyebrow.textContent = '[ TRANSCODING ]';
+    elements.progressTitle.textContent = 'RESHAPING EVERY FRAME...';
+    elements.progressNote.textContent = 'Media Sensei is compressing and converting your video.';
     setProgress(job.progress);
     pollTimer = setTimeout(() => poll(jobId), 800);
   } catch (error) {
-    fail(error.message || 'Lost contact with the compressor.');
+    fail(error.message || 'Lost contact with the converter.');
   }
 }
 
 function compress() {
   if (!selectedFile) return;
   const profile = document.querySelector('input[name="profile"]:checked').value;
+  const format = document.querySelector('input[name="format"]:checked').value;
   show('progressPanel');
-  elements.progressEyebrow.textContent = 'UPLOADING';
-  elements.progressTitle.textContent = 'Moving your video in…';
-  elements.progressNote.textContent = 'Keep this tab open. Large files can take a little while.';
+  elements.progressEyebrow.textContent = '[ UPLOADING ]';
+  elements.progressTitle.textContent = 'INGESTING VIDEO...';
+  elements.progressNote.textContent = 'Keep this terminal open while Media Sensei works.';
   setProgress(0);
 
   xhr = new XMLHttpRequest();
-  xhr.open('POST', `/api/jobs?profile=${encodeURIComponent(profile)}`);
+  xhr.open('POST', `/api/jobs?profile=${encodeURIComponent(profile)}&format=${encodeURIComponent(format)}`);
   xhr.setRequestHeader('Content-Type', selectedFile.type || 'application/octet-stream');
   xhr.setRequestHeader('X-File-Name', encodeURIComponent(selectedFile.name));
   xhr.upload.onprogress = (event) => {

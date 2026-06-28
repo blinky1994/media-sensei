@@ -1,8 +1,8 @@
 {
-  "name": "squeeze-media",
+  "name": "media-sensei",
   "version": "1.0.0",
   "private": true,
-  "description": "Local-first MP4 video compressor",
+  "description": "Local-first video compressor and converter",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
