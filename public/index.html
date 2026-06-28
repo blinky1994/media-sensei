@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f2f0e9">
+  <title>Squeeze — Make videos lighter</title>
+  <meta name="description" content="Compress large MP4 and video files locally with a clean, private workflow.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="grain"></div>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Squeeze home">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span>Squeeze</span>
+    </a>
+    <div class="privacy-pill"><span></span> Runs on your computer</div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <p class="eyebrow">VIDEO, MINUS THE WEIGHT</p>
+      <h1>Big video.<br><em>Small footprint.</em></h1>
+      <p class="lede">Compress MP4, MOV, MKV and WebM files without sending them to a mystery server. Your 600 MB video is welcome here.</p>
+    </section>
+
+    <section class="workspace" aria-label="Video compressor">
+      <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Choose a video file">
+        <input id="fileInput" type="file" accept="video/*,.mkv" hidden>
+        <div class="drop-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>
+        </div>
+        <div>
+          <h2>Drop your video here</h2>
+          <p>or <span>browse your files</span></p>
+        </div>
+        <small>MP4 · MOV · MKV · WEBM &nbsp; / &nbsp; UP TO 20 GB</small>
+      </div>
+
+      <div id="filePanel" class="file-panel hidden">
+        <div class="file-topline">
+          <div class="file-badge">MP4</div>
+          <div class="file-copy">
+            <strong id="fileName"></strong>
+            <span id="fileMeta"></span>
+          </div>
+          <button id="removeFile" class="icon-button" type="button" aria-label="Remove file">×</button>
+        </div>
+
+        <div class="divider"></div>
+        <fieldset id="profileFieldset">
+          <legend>How small should we go?</legend>
+          <div class="profiles">
+            <label class="profile">
+              <input type="radio" name="profile" value="maximum">
+              <span class="profile-card">
+                <span class="radio-dot"></span>
+                <strong>Maximum shrink</strong>
+                <small>Smallest file · up to 720p</small>
+                <b>~70–85% smaller</b>
+              </span>
+            </label>
+            <label class="profile">
+              <input type="radio" name="profile" value="balanced" checked>
+              <span class="profile-card">
+                <span class="radio-dot"></span>
+                <strong>Balanced</strong>
+                <small>Great quality · up to 1080p</small>
+                <b>~45–70% smaller</b>
+              </span>
+            </label>
+            <label class="profile">
+              <input type="radio" name="profile" value="quality">
+              <span class="profile-card">
+                <span class="radio-dot"></span>
+                <strong>Keep quality</strong>
+                <small>Gentle compression · up to 4K</small>
+                <b>~20–45% smaller</b>
+              </span>
+            </label>
+          </div>
+        </fieldset>
+        <button id="compressButton" class="primary-button" type="button">
+          <span>Compress video</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>
+        </button>
+      </div>
+
+      <div id="progressPanel" class="progress-panel hidden" aria-live="polite">
+        <div class="orb-wrap"><div class="orb"><span id="progressValue">0%</span></div></div>
+        <p id="progressEyebrow" class="eyebrow">UPLOADING</p>
+        <h2 id="progressTitle">Moving your video in…</h2>
+        <p id="progressNote">Keep this tab open. Large files can take a little while.</p>
+        <div class="progress-track"><div id="progressBar"></div></div>
+        <button id="cancelButton" class="text-button" type="button">Cancel</button>
+      </div>
+
+      <div id="resultPanel" class="result-panel hidden" aria-live="polite">
+        <div class="success-mark">
+          <svg viewBox="0 0 24 24"><path d="m6 12 4 4 8-9"/></svg>
+        </div>
+        <p class="eyebrow">NICELY SQUEEZED</p>
+        <h2>Your lighter video is ready.</h2>
+        <div class="saving-card">
+          <div><span>Before</span><strong id="beforeSize"></strong></div>
+          <span class="saving-arrow">→</span>
+          <div><span>After</span><strong id="afterSize"></strong></div>
+          <div class="saved-badge"><strong id="savedPercent"></strong><span>saved</span></div>
+        </div>
+        <a id="downloadButton" class="primary-button" href="#" download>
+          <span>Download compressed MP4</span>
+          <svg viewBox="0 0 24 24"><path d="M12 4v12m0 0 5-5m-5 5-5-5M5 20h14"/></svg>
+        </a>
+        <button id="startOver" class="text-button" type="button">Compress another video</button>
+      </div>
+
+      <div id="errorPanel" class="error-panel hidden" role="alert">
+        <span>!</span><div><strong>That didn’t compress</strong><p id="errorMessage"></p></div>
+        <button id="tryAgain" class="text-button" type="button">Try again</button>
+      </div>
+    </section>
+
+    <section class="trust-row" aria-label="Benefits">
+      <div><span>01</span><strong>Private by design</strong><p>Files never leave your computer.</p></div>
+      <div><span>02</span><strong>Made for big files</strong><p>Streamed handling, up to 20 GB.</p></div>
+      <div><span>03</span><strong>Plays everywhere</strong><p>Outputs a compatible H.264 MP4.</p></div>
+    </section>
+  </main>
+
+  <footer><span>SQUEEZE / LOCAL VIDEO COMPRESSION</span><span>NO CLOUD. NO ACCOUNT. NO NONSENSE.</span></footer>
+  <script src="/app.js"></script>
+</body>
+</html>

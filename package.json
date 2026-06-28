@@ -1,0 +1,18 @@
+{
+  "name": "squeeze-media",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local-first MP4 video compressor",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "ffmpeg-static": "^5.2.0"
+  }
+}

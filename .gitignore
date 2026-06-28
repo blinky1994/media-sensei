@@ -1,0 +1,4 @@
+node_modules/
+.media-compress-work/
+npm-debug.log*
+
